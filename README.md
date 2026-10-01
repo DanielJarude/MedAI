@@ -1,31 +1,53 @@
-# MedAI — protótipo navegável
+# MedAI — preparação para residência médica
 
-Aplicativo demonstrativo em português para preparação para residência médica. HTML, CSS e JavaScript sem dependências, backend ou chamadas de IA. Os arquivos finais estão em `dist/`.
+Evolução do protótipo existente, com onboarding guiado, perfil estruturado e progresso local separado dos exemplos. A identidade visual, as telas e o ciclo Pratique → Compreenda → Retome foram preservados.
 
 ## Executar
 
-Com Node.js 20 ou superior instalado, abra um terminal nesta pasta e execute:
+Requer Node.js 20 ou superior. Não há dependências para instalar.
 
 ```sh
 npm start
 ```
 
-Acesse http://127.0.0.1:4173. Também é possível abrir `dist/index.html` diretamente; a persistência em URLs de arquivo depende do navegador.
-
-## Fluxos
-
-Entrada demonstrativa → onboarding → visão geral → sessão → questão → correção → tutor contextual → resultado. Mapa hierárquico com cinco áreas, detalhes de tema, fila de revisões, edição de meta, mini-simulado e seleção de plano fictício.
-
-O banco contém três questões autorais de fundamentos de hipertensão, com referência à ficha educacional da OMS: https://www.who.int/news-room/fact-sheets/detail/hypertension. Os demais temas demonstram a navegação, sem questões próprias. Conteúdo não destinado a decisões clínicas.
-
-Respostas, meta, plano e revisões são guardados em `localStorage`, chave `medai-v1`. Não há autenticação real. Use nomes fictícios. Sair preserva o progresso local. Para reiniciar, limpe os dados deste site no navegador.
-
-Métricas e histórico iniciais são fictícios. Novas respostas atualizam total de questões, taxa agregada e domínio de hipertensão. Erros adicionam o tema à revisão; uma revisão com três acertos o remove. Sessões podem ser pausadas e retomadas. Tutor utiliza respostas pré-definidas, limitadas ao contexto da questão. Os planos não cobram nem limitam recursos reais.
-
-## Verificação
+Abra http://127.0.0.1:4173 e mantenha o terminal aberto. O endereço local só responde enquanto o servidor estiver em execução. Os arquivos agora usam módulos JavaScript: abra pelo servidor HTTP, não clicando diretamente no HTML.
 
 ```sh
 npm run check
+npm test
 ```
 
-O servidor serve somente os três arquivos públicos permitidos. O projeto não precisa de compilação. Para hospedagem estática, publique o conteúdo de `dist/`; rotas utilizam fragmentos de URL.
+## Estrutura
+
+- dist/index.html: entrada e favicon SVG embutido.
+- dist/style.css: identidade visual e layouts responsivos.
+- dist/app.js: navegação, telas existentes e coordenação dos eventos.
+- dist/onboarding-view.js: três passos e edição da meta.
+- dist/profile-model.js: validação, perfil de preparação, respostas, sessões, revisões e migração v1 → v2.
+- dist/profile-repository.js: acesso ao armazenamento local, isolado das regras e das telas.
+- dist/demo-data.js: questões autorais e indicadores fictícios, sem mistura com o histórico do aluno.
+- dist/specialties.js: busca por especialidade, incluindo navegação por teclado.
+- server.mjs: servidor HTTP estático, com lista explícita de arquivos permitidos.
+- tests/profile.test.mjs: testes das regras, persistência e migração.
+- .openai/hosting.json: identidade do Site e diretório de publicação.
+- ARQUITETURA.md, VALIDACAO.md, RELATORIO.md: documentação desta etapa.
+
+## Onboarding
+
+1. Sua meta: nome, prova, ano e especialidade opcional.
+2. Sua rotina: horas semanais e data-meta.
+3. Seu plano: resumo e confirmação CRIAR MEU PLANO.
+
+Até a confirmação, o menu indica bloqueio e explica o motivo ao ser acionado. O rascunho fica salvo entre etapas e recarregamentos. O formulário valida nome, ano, horas e compatibilidade da data com o ano. Confirmar libera o dashboard. Minha meta altera o objetivo sem apagar o progresso.
+
+## Persistência e limites
+
+Um perfil por navegador/origem, guardado em localStorage sob medai-v2. Dados antigos de medai-v1 são migrados uma vez; a chave antiga permanece intacta como cópia de recuperação. Uma origem diferente (outro domínio, localhost ou 127.0.0.1) possui armazenamento separado. Não há sincronização entre aparelhos, autenticação real, banco de dados remoto ou garantia de recuperação se o usuário limpar o navegador.
+
+No perfil novo, respostas, acertos, erros, assuntos, revisões e sessões começam vazios. O painel “Sua prática neste navegador” contém apenas ações feitas no aplicativo. Mapa de domínio, atividade semanal e indicadores com selo DEMO DATA continuam ilustrativos. O catálogo de especialidades é um objetivo de formação, não uma lista de vagas abertas.
+
+O banco executável contém três questões autorais de fundamentos de hipertensão. Referência educacional: https://www.who.int/news-room/fact-sheets/detail/hypertension. Não é um banco completo de provas, nem conteúdo para decisões clínicas.
+
+Tutor com respostas pré-definidas; mini-simulado utiliza as mesmas três questões; assinatura e preços são fictícios. Não há IA, pagamentos reais ou adaptação médica por especialidade.
+
+Para hospedagem estática, publique dist/. Rotas utilizam fragmentos de URL. A publicação Sites não atualiza automaticamente um repositório GitHub criado separadamente.
