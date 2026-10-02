@@ -1,0 +1,20 @@
+# FIXTURE DE TESTE — trechos do documento oficial AREMG PSU-MG 2027 — edital de instituição (Hospital Evangélico)
+# Fonte: https://www.galaxcms.com.br/ (link listado em https://www.aremg.org.br/processos-atuais)
+# Coletado em 2026-10-01. Usado apenas em testes automatizados.
+EDITAL PARA O PROCESSO SELETIVO DE RESIDÊNCIA MÉDICA – 2026
+PARA INÍCIO DAS ATIVIDADES NO PRIMEIRO SEMESTRE DE 2027
+A Associação Evangélica Beneficente de Minas Gerais/Hospital Evangélico, torna
+público, conforme dispõe Resolução CNE nº 2 de 19/12/2024, Lei 6.932 de 07/07/1981,
+1. CRONOGRAMA DO PROCESSO SELETIVO
+Publicação no site da AREMG: www.aremg.org.br 21/09/2026
+Inscrições, preenchimento e envio de documentos do currículo 06/10 a 15/10/2026
+Locais de Prova
+Optar no momento da
+Impressão do comprovante de inscrição 06/11 a 10/11/2026
+Data da prova escrita e divulgação do gabarito provisório 22/11/2026
+Resultado prova (previsão) 10/12/2026
+Resultado provisório da avaliação curricular (previsão) 21/01/2027
+computadores com os navegadores recomendados, e dentro do horário comercial.
+6.4 A taxa de inscrição no valor de R$ 300,00 (trezentos reais) por programa inscrito,
+com vencimento no dia subsequente à conclusão da inscrição deverá ser paga nas
+agências dos bancos especificados ou via débito eletrônico, por meio de guia de

@@ -1,0 +1,16 @@
+# FIXTURE DE TESTE — trechos do documento oficial ENARE Anexo III — Cronograma (Acesso Direto)
+# Fonte: https://enare2026.conhecimento.fgv.br/docs/36fa57ca8c6880b98927f791eb529752.pdf
+# Coletado em 2026-10-01. Usado apenas em testes automatizados.
+RETIFICADO EM 29/06/2026
+PUBLICAÇÃO DO EDITAL DE ABERTURA 29/05/2026
+DA ISENÇÃO DA TAXA DE INSCRIÇÃO DATA
+Período para solicitação de Isenção da Taxa de Inscrição e envio da documentação
+Data prevista* para a divulgação dos programas e vagas após o 2º período de ajuste 18/12/2026
+DO PERÍODO DE INSCRIÇÃO DATA
+Período de Inscrição 10h de 15/06 a 23h59 de
+05/07/2026
+Data limite para pagamento da taxa de inscrição 06/07/2026
+DA PROVA OBJETIVA (ENAMED) DATA
+Aplicação da Prova Objetiva (pelo Inep) 13/09/2026
+Divulgação do Resultado Definitivo da Prova Objetiva (pelo Inep) 04/12/2026
+DO PROCEDIMENTO DE CONFIRMAÇÃO DE PESSOAS PRETAS E PARDAS – ONLINE DATA

@@ -1,0 +1,40 @@
+# FIXTURE DE TESTE — trechos do documento oficial FUVEST — Edital COREME/FM nº 02/2026
+# Fonte: https://www.fuvest.br/wp-content/uploads/rm2027-edital-02-2026.pdf
+# Coletado em 2026-10-01. Usado apenas em testes automatizados.
+dos candidatos ao preenchimento de vagas para Médicos Residentes junto aos
+Programas de Residência Médica, exclusivamente para ingresso em 2027. A
+Fundação Universitária para o Vestibular – FUVEST, ficará responsável pela
+organização e aplicação do processo seletivo.
+OFERECIDAS
+090 Acupuntura Aprovado 6 395/21 2 anos 0 2 2
+003 Alergia e Imunologia Aprovado 5 396/21 2 anos 1 3 4
+113 Alergia e Imunologia – Ano Adicional Aprovado 2 287/23 1 ano 0 1 1
+095 Alergia e Imunologia Pediátrica Aprovado 6 987/21 2 anos 1 4 5
+005 Anestesiologia Aprovado 35 626/26 3 anos 0 35 35
+170 Anestesiologia – Ano Adicional Aprovado 3 883/26 1 ano 3 0 3
+178 Cardiointensivismo Aprovado 6 2171/25 1 ano 6 0 6
+IV. INSCRIÇÕES
+1. As inscrições serão realizadas, sob a responsabilidade da Fundação Universitária para
+o Vestibular (FUVEST) apenas por via eletrônica, pelo site www.fuvest.br, do dia 06 de
+outubro de 2026, a partir das 12 horas, ao dia 26 de outubro de 2026 até às 12
+horas (horário de Brasília).
+1.1. Para o cadastro inicial da inscrição, é necessário anexar Cadastro de Pessoa Física
+poderá alegar desconhecimento, o(a) candidato(a) deverá, durante o período de
+inscrições, 06 de outubro de 2026, a partir das 12h00 ao dia 26 de outubro de 2026
+até às 12h00 (horário de Brasília), acessar o site www.fuvest.br e efetuar sua inscrição
+no processo seletivo para Residência Médica 2027, respeitando as etapas a seguir:
+no ato da inscrição, sob as penas da lei.
+4.2. Gerar o boleto bancário e efetuar o pagamento da inscrição, no valor de R$ 620,00
+(seiscentos e vinte reais), impreterivelmente, até a data de vencimento do boleto.
+4.2.1. A inscrição será considerada efetivada, quando ocorrer a compensação bancária.
+2.1. A prova da 1ª fase terá peso 9 na nota classificatória final do processo seletivo.
+2.2. A PROVA SERÁ REALIZADA NO dia 06 de dezembro de 2026 (domingo), a partir
+das 13h00. O local de prova será disponibilizado na “Área do Candidato” no site
+www.fuvest.br até o dia 20 de novembro de 2026.
+58
+mediante matrícula no período determinado no Edital para ingresso em 2027. O
+reingresso do Médico Residente se dará mediante requerimento à Comissão de
+Residência Médica - COREME, até 30 de julho de 2027.3. Em cumprimento à legislação em vigor, do dia 23 de setembro de 2026, a partir das
+12 horas, ao dia 24 de setembro de 2026 até às 12 horas (horário de Brasília),
+impreterivelmente, a FUVEST receberá os pedidos de redução de 50% do valor da taxa
+de inscrição, em cumprimento à Lei Estadual nº 12.782 de 20/12/2007, dos(as)
