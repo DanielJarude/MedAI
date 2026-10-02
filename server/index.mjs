@@ -6,6 +6,7 @@ import { migrate } from './db/migrate.mjs';
 import { seedProduction } from './db/seed/production.mjs';
 import { loadQuestionsFromDb } from './services/study-service.mjs';
 import { createApp } from './app.mjs';
+import { runUpdate } from './radar/update.mjs';
 
 loadEnvFile();
 const config = readConfig();
@@ -27,6 +28,15 @@ export async function main() {
   // Se o banco estiver fora do ar na inicialização, o servidor sobe mesmo assim (API responde 503) e tenta de novo.
   const init = async () => { try { await prepareDatabase(db); return true; } catch (e) { console.error('[db] preparação falhou:', e.code || e.message, '— nova tentativa em 10 s'); setTimeout(init, 10000); return false; } };
   await init();
+  // Atualização automática opcional do Radar no próprio processo (útil com PGlite, que aceita um único processo).
+  const hours = Number(process.env.RADAR_UPDATE_INTERVAL_HOURS) || 0;
+  if (hours > 0) {
+    let running = false;
+    const tick = async () => { if (running) return; running = true; try { await runUpdate(db, { userAgent: config.radarContact ? `${config.radarUserAgent} ${config.radarContact}` : config.radarUserAgent, log: m => console.log('[radar]', m) }); } catch (e) { console.error('[radar] falha na atualização:', e.message); } finally { running = false; } };
+    setInterval(tick, hours * 3600000).unref();
+    if (process.env.RADAR_UPDATE_ON_START === 'true') setTimeout(tick, 5000).unref();
+    console.log(`Radar: atualização automática a cada ${hours} h`);
+  }
   server.listen(config.port, config.host, () => console.log(`MedAI: http://${config.host === '0.0.0.0' ? '127.0.0.1' : config.host}:${config.port}  (banco: ${db.kind})`));
   const stop = async () => { server.close(); await db.close().catch(() => {}); process.exit(0); };
   process.on('SIGINT', stop); process.on('SIGTERM', stop);

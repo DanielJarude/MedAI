@@ -33,11 +33,13 @@ function shape(row, { programs = [], notices = [], fields = [], changes = [], tr
     officialUrl: row.official_url, noticeUrl: row.notice_url,
     publishedAt: row.published_at,
     statusNote: row.status_note,
+    group: row.process_group,
+    registrationNote: row.registration_note,
     reviewStatus: row.review_status,
     registrationState: registrationState(row, today),
     lastVerifiedAt: iso(row.last_verified_at), firstSeenAt: iso(row.first_seen_at), removedAt: iso(row.removed_at),
     source: { id: row.source_id, name: row.source_name, organization: row.source_organization, url: row.source_url },
-    programs: programs.map(p => ({ specialty: p.specialty, specialtyId: p.specialty_id, programType: p.program_type, prerequisite: p.prerequisite, vacancies: p.vacancies, evidence: p.evidence, noticeUrl: p.notice_url || null })),
+    programs: programs.map(p => ({ specialty: p.specialty, specialtyId: p.specialty_id, programType: p.program_type, prerequisite: p.prerequisite, vacancies: p.vacancies, institution: p.institution_name, uf: p.uf, city: p.city, duration: p.duration, details: p.details, evidence: p.evidence, noticeUrl: p.notice_url || null })),
     notices: notices.map(n => ({ id: n.id, kind: n.kind, title: n.title, url: n.url, publishedAt: n.published_at, contentType: n.content_type, fetchedAt: iso(n.fetched_at), parseStatus: n.parse_status })),
     fields: fields.map(f => ({ field: f.field, value: f.value, evidence: f.evidence, sourceUrl: f.source_url, method: f.method, confidence: f.confidence, status: f.status, extractedAt: iso(f.extracted_at) })),
     changes: changes.map(c => ({ type: c.change_type, field: c.field, oldValue: c.old_value, newValue: c.new_value, detail: c.detail, detectedAt: iso(c.detected_at) })),
@@ -66,25 +68,31 @@ export function createRadarService(db, { clock = () => Date.now() } = {}) {
       const where = ['p.removed_at IS NULL'], params = [];
       const $ = v => { params.push(v); return '$' + params.length; };
       const text = v => String(v || '').trim().slice(0, 80);
-      if (text(filters.uf)) where.push(`upper(i.uf) = upper(${$(text(filters.uf))})`);
+      if (text(filters.uf)) { const u = $(text(filters.uf)); where.push(`(upper(i.uf) = upper(${u}) OR EXISTS (SELECT 1 FROM residency_programs rp WHERE rp.process_id = p.id AND upper(rp.uf) = upper(${u})))`); }
       if (text(filters.institution)) { const v = $(text(filters.institution)); where.push(`(i.id = ${v} OR i.name ILIKE '%' || ${v} || '%' OR i.acronym ILIKE ${v})`); }
       if (/^\d{4}$/.test(String(filters.year || ''))) where.push(`p.year = ${$(Number(filters.year))}`);
       if (filters.open === '1' || filters.open === 'true') { const t = $(today); where.push(`p.registration_start <= ${t} AND p.registration_end >= ${t}`); }
       const specialty = text(filters.specialty);
       if (specialty) { const id = $(slug(specialty)), name = $(specialty); where.push(`EXISTS (SELECT 1 FROM residency_programs rp WHERE rp.process_id = p.id AND (rp.specialty_id = ${id} OR rp.specialty ILIKE '%' || ${name} || '%'))`); }
       const rows = (await db.query(`${BASE} WHERE ${where.join(' AND ')} ORDER BY p.registration_end NULLS LAST, p.name`, params)).rows;
-      const programs = await programsFor(rows.map(r => r.id)), tracked = await trackedSet(userId);
+      const ids = rows.map(r => r.id), tracked = await trackedSet(userId);
       // Personalização: a especialidade desejada só reordena. Nada é escondido e nenhuma compatibilidade é afirmada.
-      let preferred = null;
-      if (userId) preferred = (await db.query('SELECT specialty, specialty_id FROM study_goals WHERE user_id = $1', [userId])).rows[0] || null;
+      const preferred = userId ? (await db.query('SELECT specialty, specialty_id FROM study_goals WHERE user_id = $1', [userId])).rows[0] || null : null;
       const prefId = preferred?.specialty_id || null;
+      const summary = new Map((await db.query('SELECT process_id, count(*)::int AS programs, count(DISTINCT specialty_id)::int AS specialties, count(vacancies)::int AS known, sum(vacancies)::int AS vacancies FROM residency_programs WHERE process_id = ANY($1) GROUP BY process_id', [ids])).rows.map(r => [r.process_id, r]));
+      const pref = prefId ? new Map((await db.query('SELECT process_id, min(specialty) AS specialty, count(*)::int AS programs, count(vacancies)::int AS known, sum(vacancies)::int AS vacancies FROM residency_programs WHERE process_id = ANY($1) AND specialty_id = $2 GROUP BY process_id', [ids, prefId])).rows.map(r => [r.process_id, r])) : new Map();
       const items = rows.map(r => {
-        const item = shape(r, { programs: programs.get(r.id) || [], tracked: tracked.has(r.id), today });
-        item.mentionsPreferredSpecialty = prefId ? item.programs.some(p => p.specialtyId === prefId) : false;
+        const item = shape(r, { tracked: tracked.has(r.id), today });
+        const sm = summary.get(r.id), pf = pref.get(r.id);
+        item.programSummary = sm ? { programs: sm.programs, specialties: sm.specialties } : null;
+        // Vagas da especialidade só são somadas quando todos os programas informam o número.
+        item.preferredProgram = pf ? { specialty: pf.specialty, programs: pf.programs, vacancies: pf.known === pf.programs ? pf.vacancies : null } : null;
+        item.mentionsPreferredSpecialty = !!pf;
         return item;
       });
       if (prefId) items.sort((a, b) => Number(b.mentionsPreferredSpecialty) - Number(a.mentionsPreferredSpecialty));
-      const filterValues = (await db.query(`SELECT DISTINCT i.uf, p.year FROM selection_processes p LEFT JOIN institutions i ON i.id = p.institution_id WHERE p.removed_at IS NULL`)).rows;
+      const filterValues = (await db.query(`SELECT i.uf, p.year FROM selection_processes p LEFT JOIN institutions i ON i.id = p.institution_id WHERE p.removed_at IS NULL
+        UNION SELECT rp.uf, NULL FROM residency_programs rp JOIN selection_processes p ON p.id = rp.process_id WHERE p.removed_at IS NULL`)).rows;
       return {
         today, items,
         personalization: prefId ? { specialty: preferred.specialty, specialtyId: prefId, note: 'Processos que citam sua especialidade aparecem primeiro. Isso não confirma vagas nem que você atende aos pré-requisitos: confira o edital.' } : null,
@@ -103,7 +111,11 @@ export function createRadarService(db, { clock = () => Date.now() } = {}) {
         db.query('SELECT * FROM process_changes WHERE process_id = $1 ORDER BY detected_at DESC, id DESC LIMIT 50', [row.id]).then(r => r.rows),
         trackedSet(userId)
       ]);
-      return shape(row, { programs, notices, fields, changes, tracked: tracked.has(row.id), today: localDate(clock()) });
+      const out = shape(row, { programs, notices, fields, changes, tracked: tracked.has(row.id), today: localDate(clock()) });
+      const bySpec = new Map();
+      for (const p of out.programs) { const g = bySpec.get(p.specialtyId) || { specialty: p.specialty, specialtyId: p.specialtyId, programs: 0, known: 0, vacancies: 0 }; g.programs++; if (Number.isInteger(p.vacancies)) { g.known++; g.vacancies += p.vacancies; } bySpec.set(p.specialtyId, g); }
+      out.specialtySummary = [...bySpec.values()].map(g => ({ specialty: g.specialty, specialtyId: g.specialtyId, programs: g.programs, vacancies: g.known === g.programs ? g.vacancies : null })).sort((a, b) => a.specialty.localeCompare(b.specialty, 'pt-BR'));
+      return out;
     },
 
     async sources() {
@@ -115,9 +127,9 @@ export function createRadarService(db, { clock = () => Date.now() } = {}) {
 
     async tracked(userId) {
       const rows = (await db.query(`${BASE} JOIN tracked_processes t ON t.process_id = p.id AND t.user_id = $1 ORDER BY t.created_at DESC`, [userId])).rows;
-      const programs = await programsFor(rows.map(r => r.id)), today = localDate(clock());
+      const today = localDate(clock());
       const specs = new Map((await db.query('SELECT process_id, specialty, created_at FROM tracked_processes WHERE user_id = $1', [userId])).rows.map(r => [r.process_id, r]));
-      return { today, items: rows.map(r => ({ ...shape(r, { programs: programs.get(r.id) || [], tracked: true, today }), trackedSpecialty: specs.get(r.id)?.specialty || null, trackedAt: iso(specs.get(r.id)?.created_at) })) };
+      return { today, items: rows.map(r => ({ ...shape(r, { tracked: true, today }), trackedSpecialty: specs.get(r.id)?.specialty || null, trackedAt: iso(specs.get(r.id)?.created_at) })) };
     },
 
     async track(userId, { processId, specialty }) {

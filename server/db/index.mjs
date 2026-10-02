@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync, unlinkSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 // Acesso ao banco. Uma interface mínima para PostgreSQL (produção, via `pg`) e PGlite (PostgreSQL
 // embutido em WebAssembly, para desenvolvimento e testes). O SQL é o mesmo nos dois.
 //   DATABASE_URL=postgres://usuario:senha@host:5432/medai   → PostgreSQL
@@ -19,8 +21,24 @@ export async function openDatabase(url) {
   throw new Error('DATABASE_URL deve começar com postgres://, postgresql:// ou pglite:');
 }
 
+// PGlite em disco aceita um único processo. Uma trava simples evita abrir o mesmo diretório duas vezes
+// (ex.: servidor rodando + npm run update-notices), o que corromperia os dados.
+function lockPglite(location) {
+  const file = location.replace(/\/+$/, '') + '.lock';
+  try {
+    const pid = Number(readFileSync(file, 'utf8'));
+    if (pid && pid !== process.pid) { try { process.kill(pid, 0); throw new DatabaseUnavailableError(new Error(`O banco local ${location} está em uso pelo processo ${pid}. Pare o servidor (ou use RADAR_UPDATE_INTERVAL_HOURS) antes de rodar outro comando.`)); } catch (e) { if (e instanceof DatabaseUnavailableError) throw e; } }
+  } catch (e) { if (e instanceof DatabaseUnavailableError) throw e; }
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, String(process.pid));
+  const release = () => { try { if (Number(readFileSync(file, 'utf8')) === process.pid) unlinkSync(file); } catch { /* já removida */ } };
+  process.once('exit', release);
+  return release;
+}
+
 async function openPglite(location) {
   const { PGlite } = await import('@electric-sql/pglite');
+  const release = location === 'memory' || location === '' ? () => {} : lockPglite(location);
   // DATE como texto 'AAAA-MM-DD', igual ao adaptador PostgreSQL.
   const options = { parsers: { 1082: v => v } };
   const pg = location === 'memory' || location === '' ? new PGlite(options) : new PGlite(location, options);
@@ -32,7 +50,7 @@ async function openPglite(location) {
     exec: sql => pg.exec(sql),
     tx: fn => pg.transaction(tx => fn({ query: (sql, params = []) => run(tx, sql, params), exec: sql => tx.exec(sql) })),
     ping: () => pg.query('SELECT 1'),
-    close: () => pg.close()
+    close: async () => { await pg.close(); release(); }
   };
 }
 
