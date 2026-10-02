@@ -9,9 +9,24 @@ QUESTÃO → RESULTADO → ASSUNTO → DOMÍNIO → LACUNA → REVISÃO → PRIO
 
 Princípio: **Pratique → Compreenda → Retome.** O domínio só é comprovado por desempenho posterior em questões.
 
+## V1 funcional — onde o motor roda e o que é persistido
+
+O algoritmo, os pesos e os limiares **não mudaram** nesta etapa: os 20 testes do motor passam sem alteração nas asserções. Mudou só onde ele roda e o que é persistido.
+
+- **Servidor (autoritativo)**: cada ação (iniciar sessão, responder, avançar, concluir, "Compreendi", salvar para revisão) executa as mesmas funções de `profile-model.js`/`adaptive-engine.js` sobre o estado carregado do banco. O resultado é gravado em tabelas.
+- **Eventos persistidos**:
+  - tentativas: `question_attempts`, com o registro completo da resposta;
+  - sessões: `study_sessions`, com o estado de execução para retomada;
+  - revisões: `reviews`, com histórico;
+  - "Compreendi": `content_reviews`.
+- **Derivado**: o domínio, os estados, as tendências e a recorrência são recalculados a partir dos eventos a cada carga. O snapshot fica em `topic_mastery` para consulta e auditoria. As prioridades são calculadas na hora (não persistidas), porque dependem do relógio.
+- **Navegador**: usa o mesmo motor só para exibir o plano sugerido, o Foco de hoje e as explicações.
+- **Banco de questões**: `question-bank.js` começa vazio e é carregado do banco de dados (`/api/questions` no navegador, tabela `questions` no servidor). Ordem estável pela coluna `position`.
+- **`examRelevance` / `specialtyRelevance`**: continuam **neutros (1)**. Não há dataset confiável de incidência de assuntos por prova, e a especialidade desejada só personaliza o Radar (ordenação), não o estudo.
+
 ## 1. Modelo de conhecimento (`knowledge-model.js`)
 
-Hierarquia: **grande área → assunto → subassunto** (`TAXONOMY` em `demo-data.js`). Chaves estáveis por slug: `clinica-medica`, `clinica-medica/cardiologia`, `clinica-medica/cardiologia/insuficiencia-cardiaca`. Uma resposta com assunto fora da taxonomia cria o nó automaticamente.
+Hierarquia: **grande área → assunto → subassunto** (`TAXONOMY` em `taxonomy.js`, gravada também na tabela `topics`). Chaves estáveis por slug: `clinica-medica`, `clinica-medica/cardiologia`, `clinica-medica/cardiologia/insuficiencia-cardiaca`. Uma resposta com assunto fora da taxonomia cria o nó automaticamente.
 
 A **unidade de estudo** (prioridade, revisão, sessão) é o **assunto** (ex.: Cardiologia). Área e subassunto são agregações para leitura e detalhamento.
 
