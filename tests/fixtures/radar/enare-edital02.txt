@@ -1,0 +1,16 @@
+# FIXTURE DE TESTE — trechos do documento oficial ENARE Edital nº 02/2026 (Acesso Direto)
+# Fonte: https://enare2026.conhecimento.fgv.br/docs/36fa57ca8c688040ad69c657f67c4a5d.pdf
+# Coletado em 2026-10-01. Usado apenas em testes automatizados.
+EXAME NACIONAL DE RESIDÊNCIA – ENARE
+EDIÇÃO 2026/2027
+EDITAL Nº 02/2026 – RESIDÊNCIA MÉDICA
+ACESSO DIRETO 1
+5. DAS INSCRIÇÕES
+5.1. As inscrições estarão abertas das 10h do dia 15/06/2026 até as 23h59 do dia 05/07/2026.
+5.1.1. O valor da taxa de inscrição será de R$ 330,00 (trezentos e trinta reais) para todas as
+especialidades de Acesso Direto.
+5.1.2. O candidato interessado em participar do Enare 2026/2027, deverá, obrigatoriamente,
+e) não apresentar todos os dados e documentos solicitados.
+6.18. O resultado preliminar da análise dos pedidos de isenção de taxa de inscrição será
+divulgado no endereço eletrônico https://www.gov.br/hubrasil/pt-br/ensino-e-
+pesquisa/exame-nacional-de-residencia-enare, sendo de responsabilidade do candidato
