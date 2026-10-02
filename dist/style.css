@@ -72,3 +72,31 @@ nav a .lock{margin-left:auto;font-size:.7rem}
 /* Lista de especialidades sobreposta: fechar a lista não desloca o botão sob o cursor. */
 .combo{position:relative;display:block}
 .combo .specialty-options{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:30}
+
+/* V1 funcional — Radar, contas, proveniência. Mesma paleta e tipografia. */
+.na{color:#8d9bab;font-style:italic;font-weight:400}
+body.busy{cursor:progress}
+body.busy .btn,body.busy .answer{pointer-events:none;opacity:.75}
+#toast.warn{background:#7a3d34}
+.import-card{border-color:#cfe3e4;background:#f5fbfb;margin-bottom:22px}
+.provenance{margin-top:14px}
+.radar-layout{grid-template-columns:minmax(0,1.6fr) minmax(260px,.8fr)}
+.radar-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;align-items:end}
+.radar-filters .field{margin:0}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;padding-bottom:12px}
+.process-list{display:grid;gap:18px;margin-top:18px}
+.process-list.narrow{max-width:900px}
+.process-card h2{font-size:1.25rem}
+.process-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.process-facts.wide{grid-template-columns:repeat(3,minmax(0,1fr))}
+.process-facts>div{background:#f6f9fb;border-radius:8px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.process-facts dt{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.process-facts dd{margin:0;font-weight:600;font-size:.9rem;overflow-wrap:anywhere}
+.table-wrap{overflow-x:auto;max-width:100%}
+.data-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0}
+.data-table th{text-align:left;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--line);padding:8px 8px}
+.data-table td{border-bottom:1px solid #eef2f5;padding:9px 8px;vertical-align:top}
+.data-table td.evidence{font-size:.78rem;color:#4e6680;max-width:420px}
+.nowrap{white-space:nowrap}
+@media(max-width:1100px){.radar-layout{grid-template-columns:1fr}.process-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.process-facts.wide{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.process-facts,.process-facts.wide{grid-template-columns:1fr 1fr}.nowrap{white-space:normal}}
