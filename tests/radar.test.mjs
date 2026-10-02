@@ -66,6 +66,11 @@ test('FUVEST: período de inscrição não é confundido com o período de isen�
   const p = extractFuvestPrograms(fx('fuvest-edital.txt'), 'k');
   assert.equal(p.rows.length, 7);
   assert.deepEqual(p.rows.find(r => r.details.codigo === '005'), { ...p.rows.find(r => r.details.codigo === '005'), specialty: 'Anestesiologia', vacancies: 35 });
+  const four = extractFuvestPrograms('149 Cirurgia Geral Aprovado 24 1544/21 3 anos 1 0 23 23\n107 Endocrinologia e Metabologia – Ano\nAdicional Aprovado 4 2026/806 1 ano 0 1 1\n087 Cirurgia Geral – Programa Avançado Aprovado 6 943/23 2 anos 0 2 2', 'k');
+  assert.deepEqual(four.rows.map(r => [r.specialty, r.vacancies]), [['Cirurgia Geral', 23], ['Endocrinologia e Metabologia – Ano Adicional', 1], ['Cirurgia Geral – Programa Avançado', 2]], 'retorno FA e nome em duas linhas');
+  assert.equal(four.rows[2].specialtyId, 'cirurgia-geral-programa-avancado', 'programa avançado não é confundido com acesso direto');
+  const glued = extractFuvestPrograms('102 Medicina Nuclear – Ano Adicional Aprovado 6 416/21 1ano 4 0 4\n024 Medicina Paliativa Aprovado 16 300/24 2 anos 14 1 15', 'k');
+  assert.deepEqual(glued.rows.map(r => [r.details.codigo, r.vacancies, r.duration]), [['102', 4, '1 ano'], ['024', 15, '2 anos']], 'linhas vizinhas nunca são misturadas');
   const bad = extractFuvestPrograms('090 Acupuntura Aprovado 6 395/21 2 anos 0 2 9', 'k');
   assert.equal(bad.rows.length, 0, 'linha cuja soma não fecha é descartada'); assert.equal(bad.rejected.length, 1);
 });

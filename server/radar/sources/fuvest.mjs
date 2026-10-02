@@ -36,16 +36,26 @@ export function extractFuvestFields(text) {
   };
 }
 
-// Tabela "III. ... NÚMERO PREVISTO DE VAGAS": código, programa, situação, credenciadas, parecer, duração e três
-// números finais em que o último é o total previsto (= soma dos dois anteriores). Linha que não fecha a soma é ignorada.
+// Tabela "III. ... NÚMERO PREVISTO DE VAGAS": código, programa, situação, credenciadas, parecer, duração e os números
+// finais: [retorno Forças Armadas,] bolsas MIS, bolsas SES e TOTAL previsto (= MIS + SES). Nomes quebrados em duas
+// linhas são unidos. Linha que não fecha a soma é descartada e o total vai para verificação manual.
+const ROW = /^(\d{2,3})\s+(.+?)\s+(Aprovado|Em análise|Em diligência|Provisório)\s+(\d+)\s+(\S+)\s+(\d+\s*anos?)\s+((?:\d+\s+){2,3}\d+)\s*$/;
 export function extractFuvestPrograms(text, noticeKey) {
-  const rows = [], rejected = [];
-  const seen = new Set();
-  for (const m of normalizeSpace(text).matchAll(/^(\d{3})\s+(.+?)\s+(Aprovado|Em análise|Em diligência|Provisório)\s+(\d+)\s+(\S+)\s+(\d+\s+anos?)\s+(\d+)\s+(\d+)\s+(\d+)\s*$/gm)) {
-    const [line, code, name, , , , duration, a, b, total] = m;
+  const lines = normalizeSpace(text).split('\n'), joined = [];
+  for (let i = 0; i < lines.length; i++) {
+    let l = lines[i];
+    if (/^\d{2,3}\s+\S/.test(l) && !ROW.test(l) && i + 1 < lines.length && !/^\d{2,3}\s+\S/.test(lines[i + 1]) && ROW.test(`${l} ${lines[i + 1]}`)) { l = `${l} ${lines[i + 1]}`; i++; }
+    joined.push(l);
+  }
+  const rows = [], rejected = [], seen = new Set();
+  for (const line of joined) {
+    const m = ROW.exec(line);
+    if (!m) continue;
+    const [, code, name, , , , duration, tail] = m;
     if (seen.has(code)) continue; seen.add(code);
-    if (Number(a) + Number(b) !== Number(total)) { rejected.push(line); continue; }
-    rows.push({ programKey: `fmusp-${code}`, specialty: name.trim(), specialtyId: slug(name.replace(/\s+[–-]\s+.*$/, '')), programType: null, prerequisite: null, vacancies: Number(total), duration: duration.replace(/\s+/g, ' '), institutionName: 'FMUSP', uf: 'SP', city: 'São Paulo', details: { codigo: code }, evidence: line.trim().slice(0, 200), noticeKey });
+    const nums = tail.trim().split(/\s+/).map(Number), total = nums.at(-1), mis = nums.at(-3), ses = nums.at(-2);
+    if (mis + ses !== total) { rejected.push(line); continue; }
+    rows.push({ programKey: `fmusp-${code}`, specialty: name.trim(), specialtyId: slug(name), programType: null, prerequisite: null, vacancies: total, duration: duration.replace(/(\d)\s*ano/, '$1 ano'), institutionName: 'FMUSP', uf: 'SP', city: 'São Paulo', details: { codigo: code, retornoForcasArmadas: nums.length === 4 ? nums[0] : null }, evidence: line.trim().slice(0, 200), noticeKey });
   }
   return { rows, rejected };
 }
