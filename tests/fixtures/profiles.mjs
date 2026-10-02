@@ -1,6 +1,6 @@
 // Perfis simulados APENAS PARA TESTES. Não são carregados pela aplicação.
 // As respostas passam pelo mesmo pipeline do app (recordAnswer/finishSession), com relógio controlado.
-import { QUESTION_BY_ID } from '../../dist/demo-data.js';
+import { QUESTION_BY_ID } from './demo-data.mjs';
 import { createInitialState, confirmProfile, saveDraft, startSession, recordAnswer, advanceSession, finishSession } from '../../dist/profile-model.js';
 
 export const DAY = 86400000;

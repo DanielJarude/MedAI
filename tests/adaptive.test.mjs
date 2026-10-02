@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { NOW, DAY, GOAL, withProfile, runSession, profileA, profileB, profileC, profileCRecovered } from './fixtures/profiles.mjs';
-import { QUESTIONS, QUESTION_BY_ID, DEMO_INDICATORS } from '../dist/demo-data.js';
+import { QUESTIONS, QUESTION_BY_ID, DEMO_INDICATORS } from './fixtures/demo-data.mjs';
 import { ADAPTIVE_CONFIG, mergeConfig } from '../dist/adaptive-config.js';
 import { buildKnowledge, computeMetrics, MASTERY_STATES, TRENDS, errorNotebook } from '../dist/knowledge-model.js';
 import { computePriorities, buildSessionPlan, todayFocus, buildTutorContext, scaleQuotas } from '../dist/adaptive-engine.js';

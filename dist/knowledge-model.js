@@ -1,7 +1,7 @@
 // Modelo de conhecimento do aluno: métricas por grande área, assunto e subassunto.
 // Funções puras, sem DOM nem armazenamento. Derivado apenas de respostas source:'user'.
 import { ADAPTIVE_CONFIG } from './adaptive-config.js';
-import { TAXONOMY } from './demo-data.js';
+import { TAXONOMY } from './taxonomy.js';
 
 export const DAY = 86400000;
 export const MASTERY_STATES = Object.freeze({ NONE: 'SEM DADOS', STARTING: 'INICIANDO', FRAGILE: 'FRÁGIL', DEVELOPING: 'EM DESENVOLVIMENTO', CONSISTENT: 'CONSISTENTE' });

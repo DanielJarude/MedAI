@@ -3,7 +3,7 @@
 import { ADAPTIVE_CONFIG } from './adaptive-config.js';
 import { DAY, MASTERY_STATES, TRENDS, toMs, isPersonal, nodesByLevel } from './knowledge-model.js';
 import { activeReview, isDue, overdueDays, reviewStatus, REVIEW_STATUS } from './review-scheduler.js';
-import { TAXONOMY } from './demo-data.js';
+import { TAXONOMY } from './taxonomy.js';
 
 export const BUCKETS = Object.freeze({ review: 'Revisão', high: 'Prioridade alta', development: 'Desenvolvimento', maintenance: 'Manutenção', balanced: 'Mapeamento inicial', directed: 'Revisão direcionada', simulado: 'Simulado' });
 const pct = x => Math.round(x * 100);

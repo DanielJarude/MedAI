@@ -1,7 +1,8 @@
 // Regras do perfil de preparação: validação, onboarding, sessões, respostas, aprendizado e migrações.
 // Funções puras: recebem o estado e devolvem um novo estado. Sem DOM e sem armazenamento.
 import { ADAPTIVE_CONFIG } from './adaptive-config.js';
-import { QUESTION_BY_ID, LEGACY_QUESTION_IDS, TAXONOMY, slug } from './demo-data.js';
+import { QUESTION_BY_ID, LEGACY_QUESTION_IDS } from './question-bank.js';
+import { TAXONOMY, slug } from './taxonomy.js';
 import { buildKnowledge, isPersonal, toMs } from './knowledge-model.js';
 import { updateReviewsAfterAnswer, resolveReviewsAfterSession, addManualReview, startOfDay, REVIEW_REASONS } from './review-scheduler.js';
 

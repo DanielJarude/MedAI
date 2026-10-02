@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { NOW, DAY, GOAL, withProfile, runSession } from './fixtures/profiles.mjs';
 import { createInitialState, validateGoal, saveDraft, confirmProfile, updateProfile, startSession, recordAnswer, advanceSession, preparationProfile, migrateV1, migrateV2, specialtyId } from '../dist/profile-model.js';
 import { createRepository, memoryStorage, KEYS } from '../dist/profile-repository.js';
-import { QUESTION_BY_ID } from '../dist/demo-data.js';
+import { QUESTION_BY_ID } from './fixtures/demo-data.mjs';
 
 const plan = ids => ({ kind: 'adaptive', items: ids.map(id => ({ questionId: id, topicKey: QUESTION_BY_ID.get(id).topicKey, bucket: 'adaptive', reason: 'teste' })) });
 
